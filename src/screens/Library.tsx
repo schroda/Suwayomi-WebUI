@@ -32,6 +32,8 @@ import { MangaActionMenuItems } from '@/components/manga/MangaActionMenuItems.ts
 import { TabsMenu } from '@/components/tabs/TabsMenu.tsx';
 import { TabsWrapper } from '@/components/tabs/TabsWrapper.tsx';
 import { defaultPromiseErrorHandler } from '@/util/defaultPromiseErrorHandler.ts';
+import { GET_LIBRARY_MANGA_COUNT } from '@/lib/graphql/queries/MangaQuery.ts';
+import { GetLibraryMangaCountQuery, GetLibraryMangaCountQueryVariables } from '@/lib/graphql/generated/graphql.ts';
 
 const TitleWithSizeTag = styled('span')({
     display: 'flex',
@@ -56,10 +58,15 @@ export function Library() {
         (category) => category.id !== 0 || (category.id === 0 && category.mangas.totalCount),
     );
     const tabs = tabsData ?? [];
-    const librarySize = useMemo(
-        () => tabs.map((tab) => tab.mangas.totalCount).reduce((prev, curr) => prev + curr, 0),
-        [tabs],
+
+    const useGetMangas = requestManager.useGetMangas<GetLibraryMangaCountQuery, GetLibraryMangaCountQueryVariables>(
+        {},
+        {
+            documentNode: GET_LIBRARY_MANGA_COUNT,
+        },
     );
+
+    const librarySize = useGetMangas.data?.mangas.totalCount ?? 0;
 
     const [tabSearchParam, setTabSearchParam] = useQueryParam('tab', NumberParam);
 

@@ -3223,6 +3223,11 @@ export type GetMigratableSourceMangasQueryVariables = Exact<{
 
 export type GetMigratableSourceMangasQuery = { __typename?: 'Query', mangas: { __typename?: 'MangaNodeList', nodes: Array<{ __typename?: 'MangaType', id: number, title: string, thumbnailUrl?: string | null, source?: { __typename?: 'SourceType', id: string } | null, categories: { __typename?: 'CategoryNodeList', nodes: Array<{ __typename?: 'CategoryType', id: number }> } }> } };
 
+export type GetLibraryMangaCountQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLibraryMangaCountQuery = { __typename?: 'Query', mangas: { __typename?: 'MangaNodeList', totalCount: number } };
+
 export type GetAboutQueryVariables = Exact<{ [key: string]: never; }>;
 
 

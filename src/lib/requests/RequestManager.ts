@@ -1690,11 +1690,20 @@ export class RequestManager {
         );
     }
 
-    public useGetMangas(
-        variables: GetMangasQueryVariables,
-        options?: QueryHookOptions<GetMangasQuery, GetMangasQueryVariables>,
-    ): AbortableApolloUseQueryResponse<GetMangasQuery, GetMangasQueryVariables> {
-        return this.doRequest(GQLMethod.USE_QUERY, GET_MANGAS, variables, options);
+    public useGetMangas<
+        Query = GetMangasQuery,
+        Variables extends OperationVariables = GetMangasQueryVariables,
+        DocNode extends DocumentNode | TypedDocumentNode<Query, Variables> = typeof GET_MANGAS,
+    >(
+        variables: Variables,
+        {
+            documentNode = GET_MANGAS as DocNode,
+            ...options
+        }: QueryHookOptions<Query, Variables> & {
+            documentNode?: DocNode;
+        } = {},
+    ): AbortableApolloUseQueryResponse<Query, Variables> {
+        return this.doRequest(GQLMethod.USE_QUERY, documentNode, variables, options);
     }
 
     public getMangas(
