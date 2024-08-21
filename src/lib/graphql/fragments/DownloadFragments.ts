@@ -32,3 +32,33 @@ export const DOWNLOAD_STATUS_FIELDS = gql`
         }
     }
 `;
+
+export const DOWNLOAD_UPDATES_FIELDS = gql`
+    fragment DOWNLOAD_UPDATES_FIELDS on DownloadUpdates {
+        state
+        omittedUpdates
+
+        updates {
+            type
+            download {
+                chapter {
+                    id
+                    name
+                    sourceOrder
+                    isDownloaded
+                }
+
+                manga {
+                    id
+                    title
+                    downloadCount
+                }
+
+                progress
+                state
+                tries
+                position
+            }
+        }
+    }
+`;

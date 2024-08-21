@@ -57,6 +57,7 @@ import {
     DequeueChapterDownloadsMutationVariables,
     DownloadStatusSubscription,
     DownloadStatusSubscriptionVariables,
+    DownloadUpdateType,
     EnqueueChapterDownloadMutation,
     EnqueueChapterDownloadMutationVariables,
     EnqueueChapterDownloadsMutation,
@@ -2332,7 +2333,7 @@ export class RequestManager {
         const wrappedMutate = (mutationOptions: Parameters<typeof mutate>[0]) => {
             const variables = mutationOptions?.variables?.input;
             const cachedDownloadStatus = this.graphQLClient.client.readFragment<
-                DownloadStatusSubscription['downloadChanged']
+                GetDownloadStatusQuery['downloadStatus']
             >({
                 id: 'DownloadStatus:{}',
                 fragment: DOWNLOAD_STATUS_FIELDS,
@@ -2488,7 +2489,86 @@ export class RequestManager {
     public useDownloadSubscription(
         options?: SubscriptionHookOptions<DownloadStatusSubscription, DownloadStatusSubscriptionVariables>,
     ): SubscriptionResult<DownloadStatusSubscription, DownloadStatusSubscriptionVariables> {
-        return this.doRequest(GQLMethod.USE_SUBSCRIPTION, DOWNLOAD_STATUS_SUBSCRIPTION, {}, options);
+        return this.doRequest(
+            GQLMethod.USE_SUBSCRIPTION,
+            DOWNLOAD_STATUS_SUBSCRIPTION,
+            { input: { maxUpdates: 15 } },
+            {
+                ...options,
+                onData: (onDataOptions) => {
+                    const downloadChanged = onDataOptions.data.data?.downloadStatusChanged;
+
+                    const downloadsToRemove =
+                        downloadChanged?.updates
+                            .filter((update) =>
+                                [DownloadUpdateType.Dequeued, DownloadUpdateType.Finished].includes(update.type),
+                            )
+                            .map((update) => update.download.chapter.id) ?? [];
+                    const downloadsToAdd =
+                        downloadChanged?.updates
+                            .filter((update) => update.type === DownloadUpdateType.Queued)
+                            .map((update) => update.download) ?? [];
+                    const downloadsToReorder =
+                        downloadChanged?.updates
+                            .filter((update) => update.type === DownloadUpdateType.Position)
+                            .map((update) => update.download) ?? [];
+
+                    const { cache } = this.graphQLClient.client;
+
+                    if (downloadChanged?.omittedUpdates) {
+                        cache.evict({ broadcast: true, fieldName: 'downloadStatus' });
+                        cache.evict({ broadcast: true, id: 'DownloadStatus:{}' });
+                        return;
+                    }
+
+                    cache.updateQuery<GetDownloadStatusQuery, GetDownloadStatusQueryVariables>(
+                        {
+                            query: GET_DOWNLOAD_STATUS,
+                            variables: {},
+                        },
+                        (data) => {
+                            if (!data) {
+                                return data;
+                            }
+
+                            const queueWithAddedDownloads = [...data.downloadStatus.queue, ...downloadsToAdd];
+                            const queueWithoutRemovedDownloads = queueWithAddedDownloads.filter(
+                                (download) => !downloadsToRemove.includes(download.chapter.id),
+                            );
+
+                            const queueWithReorderedDownloads = !downloadsToReorder.length
+                                ? queueWithoutRemovedDownloads
+                                : (() => {
+                                      const tmpQueue = [...queueWithoutRemovedDownloads];
+
+                                      downloadsToReorder.forEach((download) => {
+                                          const currentPos = tmpQueue.findIndex(
+                                              (tmpDownload) => tmpDownload.chapter.id === download.chapter.id,
+                                          );
+
+                                          const addPosOffset = download.position > currentPos ? 1 : 0;
+                                          const removePosOffset = download.position < currentPos ? 1 : 0;
+
+                                          tmpQueue.splice(download.position + addPosOffset, 0, download);
+                                          tmpQueue.splice(currentPos + removePosOffset, 1);
+                                      });
+
+                                      return tmpQueue;
+                                  })();
+
+                            return {
+                                ...data,
+                                downloadStatus: {
+                                    ...data.downloadStatus,
+                                    state: downloadChanged?.state ?? data.downloadStatus.state,
+                                    queue: queueWithReorderedDownloads,
+                                },
+                            };
+                        },
+                    );
+                },
+            },
+        );
     }
 
     public useUpdaterSubscription(

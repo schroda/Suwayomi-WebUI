@@ -145,7 +145,7 @@ export const DownloadQueue: React.FC = () => {
     };
 
     const toggleQueueStatus = () => {
-        if (status === 'STOPPED') {
+        if (status === DownloaderState.Stopped) {
             requestManager.startDownloads();
         } else {
             requestManager.stopDownloads();
@@ -162,9 +162,9 @@ export const DownloadQueue: React.FC = () => {
                     </IconButton>
                 </Tooltip>
 
-                <Tooltip title={t(status === 'STOPPED' ? 'global.button.start' : 'global.button.stop')}>
+                <Tooltip title={t(status === DownloaderState.Started ? 'global.button.start' : 'global.button.stop')}>
                     <IconButton onClick={toggleQueueStatus} size="large" disabled={isQueueEmpty} color="inherit">
-                        {status === 'STOPPED' ? <PlayArrowIcon /> : <PauseIcon />}
+                        {status === DownloaderState.Stopped ? <PlayArrowIcon /> : <PauseIcon />}
                     </IconButton>
                 </Tooltip>
             </>,
@@ -220,7 +220,7 @@ export const DownloadQueue: React.FC = () => {
     };
 
     const handleDelete = async (chapter: ChapterIdInfo) => {
-        const isRunning = status === 'STARTED';
+        const isRunning = status === DownloaderState.Started;
 
         try {
             if (isRunning) {
