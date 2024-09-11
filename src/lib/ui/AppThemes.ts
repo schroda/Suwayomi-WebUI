@@ -6,25 +6,45 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import { ThemeOptions } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import { t as translate } from 'i18next';
 import WebFont from 'webfontloader';
 import { defaultPromiseErrorHandler } from '@/util/defaultPromiseErrorHandler.ts';
 import { ControlledPromise } from '@/lib/ControlledPromise.ts';
 
-type Theme = { isCustom: boolean; getName: () => string; muiTheme: ThemeOptions };
+type MuiTheme = NonNullable<Parameters<typeof createTheme>[0]>;
+
+type Theme = {
+    isCustom: boolean;
+    getName: () => string;
+    muiTheme: MuiTheme;
+};
 
 const themes = {
     default: {
         isCustom: false,
         getName: () => translate('global.label.default'),
         muiTheme: {
-            palette: {
-                primary: {
-                    main: '#5b74ef',
+            colorSchemes: {
+                light: {
+                    palette: {
+                        primary: {
+                            main: '#5b74ef',
+                        },
+                        secondary: {
+                            main: '#efd65b',
+                        },
+                    },
                 },
-                secondary: {
-                    main: '#efd65b',
+                dark: {
+                    palette: {
+                        primary: {
+                            main: '#5b74ef',
+                        },
+                        secondary: {
+                            main: '#efd65b',
+                        },
+                    },
                 },
             },
         },
@@ -239,12 +259,12 @@ const getFontsFromTheme = (obj: Record<string, any>, fonts: string[] = []): stri
 
 const loadedFonts: string[] = [];
 
-export const hasMissingFonts = (theme: ThemeOptions): boolean => {
+export const hasMissingFonts = (theme: MuiTheme): boolean => {
     const themeFonts = getFontsFromTheme(theme.typography ?? {});
     return !!themeFonts.length && themeFonts.some((font) => !loadedFonts.includes(font));
 };
 
-export const loadThemeFonts = async (theme: ThemeOptions): Promise<void> => {
+export const loadThemeFonts = async (theme: MuiTheme): Promise<void> => {
     const themeFonts = getFontsFromTheme(theme.typography ?? {});
     const missingThemeFonts = themeFonts.filter((font) => !loadedFonts.includes(font));
 

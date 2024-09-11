@@ -15,6 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import ListSubheader from '@mui/material/ListSubheader';
 import Switch from '@mui/material/Switch';
 import Link from '@mui/material/Link';
+import { useColorScheme } from '@mui/material/styles';
 import { NavBarContext } from '@/components/context/NavbarContext.tsx';
 import { ThemeMode, ThemeModeContext } from '@/components/context/ThemeModeContext.tsx';
 import { Select } from '@/components/atoms/Select.tsx';
@@ -34,10 +35,13 @@ import { EmptyViewAbsoluteCentered } from '@/components/util/EmptyViewAbsoluteCe
 import { defaultPromiseErrorHandler } from '@/util/defaultPromiseErrorHandler.ts';
 import { MetadataThemeSettings } from '@/typings.ts';
 import { makeToast } from '@/components/util/Toast.tsx';
+import { AppStorage } from '@/util/AppStorage.ts';
 
 export const Appearance = () => {
     const { t, i18n } = useTranslation();
     const { themeMode, setThemeMode, pureBlackMode, setPureBlackMode, appTheme } = useContext(ThemeModeContext);
+    const { mode, setMode } = useColorScheme();
+    const actualThemeMode = (mode ?? themeMode) as ThemeMode;
 
     const { setTitle, setAction } = useContext(NavBarContext);
     useEffect(() => {
@@ -88,7 +92,17 @@ export const Appearance = () => {
         >
             <ListItem>
                 <ListItemText primary={t('settings.appearance.theme.device_theme')} />
-                <Select<ThemeMode> value={themeMode} onChange={(e) => setThemeMode(e.target.value as ThemeMode)}>
+                <Select<ThemeMode>
+                    value={actualThemeMode}
+                    onChange={(e) => {
+                        const newMode = e.target.value as 'system' | 'light' | 'dark';
+
+                        setThemeMode(newMode as ThemeMode);
+                        setMode(newMode);
+                        // in case a non "colorSchemes" mui theme is active, "setMode" does not update the mode ("mui-mode") value
+                        AppStorage.local.setItem('mui-mode', newMode, true, false);
+                    }}
+                >
                     <MenuItem key={ThemeMode.SYSTEM} value={ThemeMode.SYSTEM}>
                         System
                     </MenuItem>

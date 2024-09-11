@@ -7,12 +7,14 @@
  */
 
 import {
+    ColorSystemOptions,
     createTheme as createMuiTheme,
     darken,
     Direction,
     lighten,
     Palette,
     responsiveFontSizes,
+    SupportedColorScheme,
     Theme,
 } from '@mui/material/styles';
 import { ThemeMode } from '@/components/context/ThemeModeContext.tsx';
@@ -22,6 +24,12 @@ import { defaultPromiseErrorHandler } from '@/util/defaultPromiseErrorHandler.ts
 
 const SCROLLBAR_SIZE = 14;
 
+declare module '@mui/material/styles' {
+    interface CssThemeVariables {
+        enabled: true;
+    }
+}
+
 export const createTheme = (
     themeMode: ThemeMode,
     appTheme: AppTheme,
@@ -29,48 +37,66 @@ export const createTheme = (
     direction: Direction = 'ltr',
 ) => {
     const systemMode = MediaQuery.getSystemThemeMode();
+    const tmpThemeMode = themeMode === ThemeMode.SYSTEM ? systemMode : themeMode;
 
-    const appThemeType = (appTheme.muiTheme.palette as any)?.type ?? appTheme.muiTheme.palette?.mode;
-    const isStaticThemeMode = !!appThemeType;
-    const appThemeMode = appThemeType === 'dark' ? ThemeMode.DARK : ThemeMode.LIGHT;
+    const appThemeColorSchemes = appTheme.muiTheme.colorSchemes;
+    const appThemePalette =
+        appTheme.muiTheme.palette ??
+        (appThemeColorSchemes?.[tmpThemeMode as SupportedColorScheme] as ColorSystemOptions | undefined)?.palette;
+
+    const isStaticPaletteThemeMode = !!(appTheme.muiTheme.palette as any)?.type ?? appTheme.muiTheme.palette?.mode;
+    const isStaticColorSchemesThemeMode =
+        !!appThemeColorSchemes && !(!!appThemeColorSchemes?.dark && !!appThemeColorSchemes?.light);
+    const isStaticThemeMode = isStaticPaletteThemeMode || isStaticColorSchemesThemeMode;
+
+    const isStaticDarkModePalette =
+        ((appTheme.muiTheme.palette as any)?.type ?? appTheme.muiTheme.palette?.mode) === ThemeMode.DARK;
+    const isStaticDarkModeColorSchemes = !!appThemeColorSchemes?.dark && !appThemeColorSchemes?.light;
+    const isStaticDarkMode = isStaticDarkModePalette || isStaticDarkModeColorSchemes;
+
+    const appThemeMode = isStaticDarkMode ? ThemeMode.DARK : ThemeMode.LIGHT;
     const staticThemeMode = isStaticThemeMode ? appThemeMode : undefined;
 
-    const mode = staticThemeMode ?? (themeMode === ThemeMode.SYSTEM ? systemMode : themeMode);
+    const mode = staticThemeMode ?? tmpThemeMode;
+
     const isDarkMode = mode === ThemeMode.DARK;
     const setPureBlackMode = isDarkMode && pureBlackMode;
 
     const baseTheme = createMuiTheme({
         direction,
         ...appTheme.muiTheme,
-        palette: {
-            mode,
-            ...(appTheme.muiTheme.palette ?? {}),
-        },
+        ...(appTheme.muiTheme.palette ? { palette: { mode, ...appTheme.muiTheme.palette } } : {}),
+        ...(appTheme.muiTheme.colorSchemes ? { colorSchemes: { ...appTheme.muiTheme.colorSchemes } } : {}),
     });
+
+    const baseThemePalette = appThemeColorSchemes
+        ? baseTheme.colorSchemes[mode as SupportedColorScheme]?.palette!
+        : baseTheme.palette;
 
     const backgroundTrueBlack: Palette['background'] = {
         paper: '#111',
         default: '#000',
     };
+
     const backgroundDark: Palette['background'] = {
-        paper: darken(baseTheme.palette.primary.main, 0.75),
-        default: darken(baseTheme.palette.primary.main, 0.85),
+        paper: darken(baseThemePalette?.primary.main, 0.75),
+        default: darken(baseThemePalette?.primary.main, 0.85),
     };
     const backgroundLight: Palette['background'] = {
-        paper: lighten(baseTheme.palette.primary.dark, 0.8),
-        default: lighten(baseTheme.palette.primary.dark, 0.9),
+        paper: lighten(baseThemePalette?.primary.main, 0.8),
+        default: lighten(baseThemePalette?.primary.main, 0.9),
     };
     const backgroundThemeMode = isDarkMode ? backgroundDark : backgroundLight;
     const automaticBackground = setPureBlackMode ? backgroundTrueBlack : backgroundThemeMode;
-    const appThemeBackground = appTheme.muiTheme.palette?.background;
+    const appThemeBackground = appThemePalette?.background;
 
     const requiresAutomaticBackground = setPureBlackMode || !appThemeBackground;
     const background = requiresAutomaticBackground ? automaticBackground : appThemeBackground;
 
     const colorTheme = createMuiTheme(baseTheme, {
-        palette: {
-            background,
-        },
+        ...(appTheme.muiTheme.palette ? { palette: { background } } : {}),
+        // TODO - MUI does not deep merge the colorSchemes property, rendering the automatic background color and pure black background useless
+        ...(appTheme.muiTheme.colorSchemes ? { colorSchemes: { [mode]: { palette: { background } } } } : {}),
     });
 
     const suwayomiTheme = createMuiTheme(colorTheme, {

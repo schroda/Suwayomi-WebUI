@@ -67,7 +67,7 @@ export const ThemeList = () => {
             {allThemes.map((theme) => (
                 <ThemePreview
                     key={theme.id}
-                    theme={theme}
+                    appTheme={theme}
                     onDelete={() => {
                         makeToast(t('settings.appearance.theme.delete.action', { theme: theme.getName() }), 'info');
                         updateCustomThemes(
