@@ -12,7 +12,7 @@ import { LibraryOptions, LibrarySortMode, NullAndUndefined } from '@/typings.ts'
 import { useLibraryOptionsContext } from '@/components/context/LibraryOptionsContext.tsx';
 import { useMetadataServerSettings } from '@/lib/metadata/metadataServerSettings.ts';
 import { ChapterType, MangaType, SourceType, TrackRecordType } from '@/lib/graphql/generated/graphql.ts';
-import { MangaChapterCountInfo, MangaIdInfo } from '@/lib/data/Mangas.ts';
+import { MangaChapterCountInfo, MangaIdInfo, MangaTrackRecordScoreInfo } from '@/lib/data/Mangas.ts';
 import { enhancedCleanup } from '@/lib/data/Strings.ts';
 
 const triStateFilter = (
@@ -137,7 +137,8 @@ const sortByNumber = (a: number | string = 0, b: number | string = 0) => Number(
 const sortByString = (a: string, b: string): number => a.localeCompare(b);
 
 type TMangaSort = Pick<MangaType, 'title' | 'inLibraryAt' | 'unreadCount'> &
-    MangaChapterCountInfo & {
+    MangaChapterCountInfo &
+    MangaTrackRecordScoreInfo & {
         lastReadChapter?: Pick<ChapterType, 'lastReadAt'> | null;
         latestUploadedChapter?: Pick<ChapterType, 'uploadDate'> | null;
         latestFetchedChapter?: Pick<ChapterType, 'fetchedAt'> | null;
@@ -172,6 +173,13 @@ const sortManga = <Manga extends TMangaSort>(
             break;
         case 'sortTotalChapters':
             result.sort((a, b) => sortByNumber(a.chapters.totalCount, b.chapters.totalCount));
+            break;
+        case 'sortTrackerScore':
+            result.sort(
+                (a, b) =>
+                    a.trackRecords.nodes.map(({ score }) => (score > 10 ? score / 10 : score)).length -
+                    b.trackRecords.nodes.map(({ score }) => (score > 10 ? score / 10 : score)).length,
+            );
             break;
         default:
             break;

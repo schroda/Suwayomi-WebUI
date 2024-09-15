@@ -136,6 +136,9 @@ export type MangaThumbnailInfo = Pick<MangaType, 'thumbnailUrl' | 'thumbnailUrlL
 export type MangaTrackRecordInfo = MangaIdInfo & {
     trackRecords: { nodes: Pick<TrackRecordType, 'id' | 'trackerId'>[] };
 };
+export type MangaTrackRecordScoreInfo = MangaIdInfo & {
+    trackRecords: { nodes: Pick<TrackRecordType, 'score'>[] };
+};
 
 export type MigrateMode = 'copy' | 'migrate';
 

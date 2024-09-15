@@ -37,6 +37,7 @@ const SORT_OPTIONS: [LibrarySortMode, TranslationKey][] = [
     ['sortLastRead', 'library.option.sort.label.by_last_read'],
     ['sortLatestFetchedChapter', 'library.option.sort.label.by_latest_fetched_chapter'],
     ['sortLatestUploadedChapter', 'library.option.sort.label.by_latest_uploaded_chapter'],
+    ['sortTrackerScore', 'library.option.sort.label.by_tracker_score'],
 ];
 
 interface IProps {

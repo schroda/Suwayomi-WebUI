@@ -515,6 +515,7 @@
           "by_latest_fetched_chapter": "Latest fetched chapter",
           "by_latest_uploaded_chapter": "Latest uploaded chapter",
           "by_total_chapters": "Total chapters",
+          "by_tracker_score": "Tracker score",
           "by_unread_chapters": "Unread chapters"
         }
       }

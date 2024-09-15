@@ -258,7 +258,8 @@ export type LibrarySortMode =
     | 'sortLastRead'
     | 'sortLatestFetchedChapter'
     | 'sortLatestUploadedChapter'
-    | 'sortTotalChapters';
+    | 'sortTotalChapters'
+    | 'sortTrackerScore';
 
 enum GridLayout {
     Compact = 0,
