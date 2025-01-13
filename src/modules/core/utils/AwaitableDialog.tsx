@@ -7,10 +7,9 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { ThemeProvider } from '@mui/material/styles';
 import { ConfirmDialog } from '@/modules/core/components/ConfirmDialog.tsx';
 import { ControlledPromise } from '@/lib/ControlledPromise.ts';
-import { getCurrentTheme } from '@/modules/theme/services/ThemeCreator.ts';
+import { AppContext } from '@/modules/core/contexts/AppContext.tsx';
 
 export const awaitConfirmation = async (
     dialogProps: Omit<React.ComponentProps<typeof ConfirmDialog>, 'onCancel' | 'onConfirm'>,
@@ -33,7 +32,7 @@ export const awaitConfirmation = async (
     };
 
     root.render(
-        <ThemeProvider theme={getCurrentTheme()}>
+        <AppContext>
             <ConfirmDialog
                 {...dialogProps}
                 onExtra={() => {
@@ -44,7 +43,7 @@ export const awaitConfirmation = async (
                 onConfirm={() => handleConfirmation(true)}
             />
             ,
-        </ThemeProvider>,
+        </AppContext>,
     );
 
     return confirmationPromise.promise;

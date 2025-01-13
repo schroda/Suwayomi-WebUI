@@ -22,6 +22,9 @@
     "dayjs:gen-locales-array": "tsx tools/scripts/generateDayJsLocales.ts",
     "dayjs:gen-locales-import": "tsx tools/scripts/generateDayJsLocalesImport.ts",
     "dayjs:gen-locales": "yarn dayjs:gen-locales-array && yarn dayjs:gen-locales-import",
+    "mui:gen-locales-array": "tsx tools/scripts/generateMuiLocales.ts",
+    "mui:gen-locales-import": "tsx tools/scripts/generateMuiLocalesImport.ts",
+    "mui:gen-locales": "yarn mui:gen-locales-array && yarn mui:gen-locales-import",
     "prepare": "husky"
   },
   "engines": {

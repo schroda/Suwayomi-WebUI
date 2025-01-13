@@ -13,6 +13,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { useTranslation } from 'react-i18next';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import { Link } from 'react-router-dom';
 
 type Action = {
     show?: boolean;
@@ -21,7 +22,7 @@ type Action = {
 };
 
 type Actions = {
-    extra?: Action;
+    extra?: Action & { url?: string };
     cancel?: Action;
     confirm?: Action;
 };
@@ -48,6 +49,7 @@ export const ConfirmDialog = ({
             show: passedActions?.extra?.show ?? false,
             title: passedActions?.extra?.title ?? '',
             contain: passedActions?.extra?.contain ?? false,
+            url: passedActions?.extra?.url,
         },
         cancel: {
             show: passedActions?.cancel?.show ?? true,
@@ -64,7 +66,7 @@ export const ConfirmDialog = ({
                 true,
         },
     } satisfies Actions;
-
+    console.log('asdf', actions.extra);
     return (
         <Dialog open onClose={onCancel}>
             <DialogTitle>{title}</DialogTitle>
@@ -83,11 +85,21 @@ export const ConfirmDialog = ({
                         width: '100%',
                     }}
                 >
-                    {actions.extra.show && (
-                        <Button onClick={onExtra} variant={actions.extra.contain ? 'contained' : undefined}>
-                            {actions.extra.title}
-                        </Button>
-                    )}
+                    {actions.extra.show &&
+                        (actions.extra.url ? (
+                            <Button
+                                component={Link}
+                                to={actions.extra.url}
+                                onClick={onExtra}
+                                variant={actions.extra.contain ? 'contained' : undefined}
+                            >
+                                {actions.extra.title}
+                            </Button>
+                        ) : (
+                            <Button onClick={onExtra} variant={actions.extra.contain ? 'contained' : undefined}>
+                                {actions.extra.title}
+                            </Button>
+                        ))}
                     <Stack direction="row">
                         {actions.cancel.show && (
                             <Button onClick={onCancel} variant={actions.cancel.contain ? 'contained' : undefined}>
