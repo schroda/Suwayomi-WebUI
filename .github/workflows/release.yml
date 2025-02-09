@@ -96,7 +96,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -a --amend --no-edit
+          git commit -am "[Release] Version ${{ github.event.inputs.release_version }}"
           git tag ${{ steps.GenTagName.outputs.value }}
 
       - name: Push changes and tag
