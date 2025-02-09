@@ -120,6 +120,6 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "master/buildZip/*"
-          owner: "Suwayomi"
+          owner: "schroda"
           repo: "Suwayomi-WebUI"
           tag: ${{ steps.GenTagName.outputs.value }}
