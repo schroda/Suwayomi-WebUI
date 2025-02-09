@@ -57,7 +57,9 @@ jobs:
       - name: Rename artifact
         run: |
           cd buildZip
-          rename 's/r$(git rev-list HEAD --count)/${{ steps.GenTagName.outputs.value }}' *.zip
+          for file in *.zip; do
+            mv "$file" "${file%-r$(git rev-list HEAD --count).zip}-${{ steps.GenTagName.outputs.value }}.zip"
+          done
 
       - name: Create Tag
         run: |
