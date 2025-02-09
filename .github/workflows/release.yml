@@ -46,7 +46,16 @@ jobs:
           node-version-file: './master/package.json'
 
       - name: Install dependencies
-        run: yarn install
+        run: |
+          ls node_modules
+          yarn install
+          echo "@asdf current"
+          ls node_modules
+          cd master
+          ls
+          yarn install
+          echo "@asdf master"
+          l
 
       - name: Update weblate and github tokens in tokens.json for the changelog creation scripts
         run: |
