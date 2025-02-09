@@ -47,10 +47,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          ls node_modules
+          ls
           yarn install
           echo "@asdf current"
-          ls node_modules
+          ls
           cd master
           ls
           yarn install
