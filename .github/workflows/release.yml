@@ -9,9 +9,6 @@ on:
       last_release_commit_hash:
         description: 'Last release commit hash'
         required: true
-      weblate_token:
-        description: 'Authentication token for weblate'
-        required: true
       translation_start_date:
         description: 'Translation changelog start date (yyyy-mm-dd)'
         required: true
@@ -62,7 +59,7 @@ jobs:
 
       - name: Update weblate and github tokens in tokens.json for the changelog creation scripts
         run: |
-          jq --arg weblate_token "${{ github.event.inputs.weblate_token }}" \
+          jq --arg weblate_token "${{ secrets.WEBLATE_TOKEN }}" \
              --arg github_token "${{ secrets.GITHUB_TOKEN }}" \
              '.weblateToken = $weblate_token | .githubToken = $github_token' \
              ./tools/scripts/token.template.json > tmp.json
@@ -73,10 +70,6 @@ jobs:
         run: |
           yarn createChangelog --sha ${{ github.event.inputs.last_release_commit_hash }} > changelog_output.txt
           yarn createTranslationChangelog --ad ${{ github.event.inputs.translation_start_date }} --bd ${{ github.event.inputs.translation_end_date }} > translation_changelog_output.txt
-
-      - name: Revert changes to tokens.json
-        run: |
-          git checkout -- ./tools/scripts/tokens.json
 
       - name: Save changelog to file
         run: |
