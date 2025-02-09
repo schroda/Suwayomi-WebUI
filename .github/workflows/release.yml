@@ -6,18 +6,6 @@ on:
       release_version:
         description: 'Release version'
         required: true
-      last_release_commit_hash:
-        description: 'Last release commit hash'
-        required: true
-      translation_start_date:
-        description: 'Translation changelog start date (yyyy-mm-dd)'
-        required: true
-      translation_end_date:
-        description: 'Translation changelog end date (yyyy-mm-dd)'
-        required: true
-      summary:
-        description: 'Summary'
-        required: true
 
 defaults:
   run:
@@ -57,54 +45,11 @@ jobs:
         run: |
           yarn ci
 
-      - name: Update weblate and github tokens in tokens.json for the changelog creation scripts
-        run: |
-          jq --arg weblate_token "${{ secrets.WEBLATE_TOKEN }}" \
-             --arg github_token "${{ secrets.GITHUB_TOKEN }}" \
-             '.weblateToken = $weblate_token | .githubToken = $github_token' \
-             ./tools/scripts/token.template.json > tmp.json
-          mv tmp.json ./tools/scripts/tokens.json
-
-      - name: Create changelog
-        id: changelog
-        run: |
-          yarn createChangelog --sha ${{ github.event.inputs.last_release_commit_hash }} > changelog_output.txt
-          yarn createTranslationChangelog --ad ${{ github.event.inputs.translation_start_date }} --bd ${{ github.event.inputs.translation_end_date }} > translation_changelog_output.txt
-
-      - name: Save changelog to file
-        run: |
-          echo "${{ github.event.inputs.summary }}" > new_changelog.txt
-          cat changelog_output.txt >> new_changelog.txt
-          cat translation_changelog_output.txt >> new_changelog.txt
-          cat new_changelog.txt
-          cat CHANGELOG.md >> new_changelog.txt
-          mv new_changelog.txt CHANGELOG.md
-
       - name: Generate Tag Name
         id: GenTagName
         run: |
           genTag="v${{ github.event.inputs.release_version }}"
           echo "::set-output name=value::$genTag"
-
-      - name: Update UI version to server version mapping file
-        run: |
-          commit_count="r$(git rev-list --count HEAD)"
-          jq --arg commit_count "$commit_count" '.[0].uiVersion |= $commit_count | map(select(.tag != "PREVIEW"))' versionToServerVersionMapping.json > updatedVersionToServerVersionMapping.json
-          cat updatedVersionToServerVersionMapping.json
-          mv updatedVersionToServerVersionMapping.json versionToServerVersionMapping.json
-
-
-      - name: Commit changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -am "[Release] Version ${{ github.event.inputs.release_version }}"
-          git tag ${{ steps.GenTagName.outputs.value }}
-
-      - name: Push changes and tag
-        run: |
-          git push origin HEAD:master
-          git push origin ${{ steps.GenTagName.outputs.value }}
 
       - name: Build webUI
         run: |
@@ -112,11 +57,10 @@ jobs:
           yarn build
           yarn build-zip
           yarn build-md5
-          ls buildZip
-          for file in buildZip/*-r.*; do
+          for file in ./buildZip/*-r.*; do
             mv "$file" "${file%-r.*}-${{ steps.GenTagName.outputs.value }}"
           done
-          ls buildZip
+          ls ./buildZip
 
       - name: Upload Release
         uses: ncipollo/release-action@v1
@@ -125,3 +69,4 @@ jobs:
           owner: "schroda"
           repo: "Suwayomi-WebUI"
           tag: ${{ steps.GenTagName.outputs.value }}
+          draft: true
