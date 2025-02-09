@@ -54,6 +54,7 @@ jobs:
 
       - name: Update weblate and github tokens in tokens.json for the changelog creation scripts
         run: |
+          cd master
           jq --arg weblate_token "${{ github.event.inputs.weblate_token }}" \
              --arg github_token "${{ secrets.GITHUB_TOKEN }}" \
              '.weblateToken = $weblate_token | .githubToken = $github_token' \
