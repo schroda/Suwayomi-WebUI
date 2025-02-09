@@ -225,7 +225,7 @@ const createChangelog = async (prevReleaseLastCommitSha: string) => {
 
     const contributors = getContributors(commits);
     const contributorString = contributors.reduce((authorCredit, author) => `${authorCredit}, @${author}`);
-    console.log(`\n\nContributors:\n@${contributorString}`);
+    console.log(`\n\n## Contributors:\n@${contributorString}`);
 };
 
 createChangelog(sha).catch((error) => {
