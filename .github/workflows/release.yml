@@ -76,6 +76,7 @@ jobs:
           echo "${{ github.event.inputs.summary }}" > new_changelog.txt
           cat changelog_output.txt >> new_changelog.txt
           cat translation_changelog_output.txt >> new_changelog.txt
+          cat new_changelog.txt
           cat CHANGELOG.md >> new_changelog.txt
           mv new_changelog.txt CHANGELOG.md
 
@@ -89,6 +90,7 @@ jobs:
         run: |
           commit_count="r$(git rev-list --count HEAD)"
           jq --arg commit_count "$commit_count" '.[0].uiVersion |= $commit_count | map(select(.tag != "PREVIEW"))' versionToServerVersionMapping.json > updatedVersionToServerVersionMapping.json
+          cat updatedVersionToServerVersionMapping.json
           mv updatedVersionToServerVersionMapping.json versionToServerVersionMapping.json
 
 
