@@ -87,7 +87,7 @@ jobs:
       - name: Update UI version to server version mapping file
         run: |
           commit_count="r$(git rev-list --count HEAD)"
-          (.[0].uiVersion) |= $commit_count |
+          jq (.[0].uiVersion) |= $commit_count |
           map(select(.tag != "PREVIEW"))' versionToServerVersionMapping.json > updatedVersionToServerVersionMapping.json"
           mv updatedVersionToServerVersionMapping.json versionToServerVersionMapping.json
 
