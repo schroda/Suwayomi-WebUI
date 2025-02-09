@@ -41,22 +41,23 @@ jobs:
             **/node_modules
           key: ${{ runner.os }}-release-${{ hashFiles('**/yarn.lock') }}
 
+      - name: Generate Tag Name
+        id: GenTagName
+        run: |
+          genTag="v${{ github.event.inputs.release_version }}"
+          echo "::set-output name=value::$genTag"
+
       - name: Build webUI
         run: |
           yarn ci
           yarn build
           yarn build-zip
           yarn build-md5
-          for file in ./buildZip/*-r.*; do
-            mv "$file" "${file%-r.*}-${{ steps.GenTagName.outputs.value }}"
-          done
-          ls ./buildZip
 
-      - name: Generate Tag Name
-        id: GenTagName
+      - name: Rename artifact
         run: |
-          genTag="v${{ github.event.inputs.release_version }}"
-          echo "::set-output name=value::$genTag"
+          cd buildZip
+          rename 's/r$(git rev-list HEAD --count)/${{ steps.GenTagName.outputs.value }}' *.zip
 
       - name: Create Tag
         run: |
