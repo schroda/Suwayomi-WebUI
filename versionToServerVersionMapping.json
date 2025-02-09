@@ -1,22 +1,7 @@
 [
   {
-    "uiVersion": "PREVIEW",
+    "uiVersion": "r2350",
     "serverVersion": "r1636"
-  },
-  {
-    "tag": "PREVIEW",
-    "uiVersion": "r1943",
-    "serverVersion": "r1566"
-  },
-  {
-    "tag": "PREVIEW",
-    "uiVersion": "r1797",
-    "serverVersion": "r1548"
-  },
-  {
-    "tag": "PREVIEW",
-    "uiVersion": "r1738",
-    "serverVersion": "r1536"
   },
   {
     "tag": "v1.1.0",

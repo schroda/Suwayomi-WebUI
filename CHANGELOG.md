@@ -1,3 +1,48 @@
+my summary
+yarn run v1.22.22
+$ tsx tools/scripts/createReleaseChangelog.ts --sha a32c88a54903a7d00db759a29e33c9dc7fc802a1
+- ([r2332](https://github.com/Suwayomi/Suwayomi-WebUI/commit/a7df8eb0f4bce1d02bd05ff4a47a0bf958033ab3)) Show image loading placeholder only when visible (by @schroda)
+- ([r2331](https://github.com/Suwayomi/Suwayomi-WebUI/commit/a4e9e8f2644b55f93eca6114471df57f4e1426bc)) Introduce "useIntersectionObserver" hook (by @schroda)
+- ([r2330](https://github.com/Suwayomi/Suwayomi-WebUI/commit/050094c991924c37697cdaea0745d953058a5373)) Update styling of "manga open source" button (by @schroda)
+- ([r2329](https://github.com/Suwayomi/Suwayomi-WebUI/commit/f633059083d24b04f0fdc1ea6da349e05fa1b4d1)) Rename "CustomIconButton" to "CustomButton" (by @schroda)
+- ([r2328](https://github.com/Suwayomi/Suwayomi-WebUI/commit/cae52fd7825ac866d9ca106a553def5ba07dd543)) Add "blend mode" to "custom color filter" (by @schroda)
+- ([r2327](https://github.com/Suwayomi/Suwayomi-WebUI/commit/9d3aeafe0e1bdc7f34206d3f6f09c57e05654280)) Use "BasePager" for infinite scroll chapter change detection (by @schroda)
+- ([r2326](https://github.com/Suwayomi/Suwayomi-WebUI/commit/b12e28346c1493d1a4cffce3e51082a33a84fc21)) Improve reader infinite scroll chapter change detection (by @schroda)
+- ([r2325](https://github.com/Suwayomi/Suwayomi-WebUI/commit/187693ce5a7be94259843d17a2efd8f560b2799a)) Properly handle not skipping duplicate chapters (by @schroda)
+
+
+## Contributors:
+@schroda
+Done in 3.40s.
+yarn run v1.22.22
+$ tsx tools/scripts/createTranslationChangelog.ts --ad 2024-06-15 --bd 2025-02-10
+## Translations
+Feel free to translate the project on [Weblate](https://hosted.weblate.org/projects/suwayomi/suwayomi-webui/)
+
+Thank you for your contribution to the translation of the project.
+
+### Added
+- Thai (by Demax TV, kumo manga)
+- Dutch (by Mathijs Mooij)
+- Danish (by Malthe Hensberg)
+- Portuguese (Brazil) (by mamotromico)
+
+### Updated
+- Chinese (Traditional) (by plum7x, aaron mo)
+- Portuguese (by Leonardo de Macedo Sartorello, lucas Christofaro)
+- Japanese (by marimo)
+- Italian (by Gianluca Lauro, tizio04)
+- Spanish (by Fordas, Deleted User)
+- Indonesian (by Felana, Suhada Kaltim)
+- Chinese (Simplified) (by 清水汐音)
+- Turkish (by Oxara, m.a.tecik, Mustafa Değerli)
+- French (by Jean-Philippe ALLEGRO)
+- Vietnamese (by Nguyễn Trung Đức, PandaKewt)
+- Russian (by Костин Ярослав (RikKos), Hajvk “Sqiqk” Lkaj)
+- German (by MK)
+- Arabic (by Ayoub)
+- Korean (by 정마니(https://hjm79.top))
+Done in 31.68s.
 # v1.1.0 (r1689)
 
 - Tracking support
