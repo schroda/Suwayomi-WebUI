@@ -47,19 +47,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          ls
-          yarn install
-          echo "@asdf current"
-          ls
           cd master
-          ls
           yarn install
-          echo "@asdf master"
-          l
 
       - name: Update weblate and github tokens in tokens.json for the changelog creation scripts
         run: |
-          cd master
+          ls
           jq --arg weblate_token "${{ github.event.inputs.weblate_token }}" \
              --arg github_token "${{ secrets.GITHUB_TOKEN }}" \
              '.weblateToken = $weblate_token | .githubToken = $github_token' \
@@ -69,7 +62,7 @@ jobs:
       - name: Create changelog
         id: changelog
         run: |
-          cd master
+          ls
           yarn createChangelog --sha ${{ github.event.inputs.last_release_commit_hash }} > changelog_output.txt
           yarn createTranslationChangelog --ad ${{ github.event.inputs.translation_start_date }} --bd ${{ github.event.inputs.translation_end_date }} > translation_changelog_output.txt
 
