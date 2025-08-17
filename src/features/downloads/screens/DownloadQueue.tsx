@@ -6,19 +6,13 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import PauseIcon from '@mui/icons-material/Pause';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useWindowEvent } from '@mantine/hooks';
-import { CustomTooltip } from '@/base/components/CustomTooltip.tsx';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
-import { makeToast } from '@/base/utils/Toast.ts';
 import { EmptyViewAbsoluteCentered } from '@/base/components/feedback/EmptyViewAbsoluteCentered.tsx';
 import { LoadingPlaceholder } from '@/base/components/feedback/LoadingPlaceholder.tsx';
 import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts';
@@ -32,6 +26,8 @@ import { useAppTitle } from '@/features/navigation-bar/hooks/useAppTitle.ts';
 import { useAppAction } from '@/features/navigation-bar/hooks/useAppAction.ts';
 import { ChapterDownloadStatus } from '@/features/chapter/Chapter.types.ts';
 import { VirtuosoPersisted } from '@/lib/virtuoso/Component/VirtuosoPersisted.tsx';
+import { DownloadQueueStateButton } from '@/features/downloads/components/DownloadQueueStateButton.tsx';
+import { DownloadQueueClearButton } from '@/features/downloads/components/DownloadQueueClearButton.tsx';
 
 export const DownloadQueue: React.FC = () => {
     const { t } = useTranslation();
@@ -55,22 +51,6 @@ export const DownloadQueue: React.FC = () => {
     const dndItems = useMemo(() => queue.map((download) => download.chapter), [queue]);
     const dndSensors = DndKitUtil.useSensorsForDevice();
     const [dndActiveDownload, setDndActiveDownload] = useState<ChapterDownloadStatus | null>(null);
-
-    const clearQueue = async () => {
-        try {
-            await requestManager.clearDownloads().response;
-        } catch (e) {
-            makeToast(t('download.queue.error.label.failed_delete_all'), 'error', getErrorMessage(e));
-        }
-    };
-
-    const toggleQueueStatus = () => {
-        if (status === DownloaderState.Stopped) {
-            requestManager.startDownloads();
-        } else {
-            requestManager.stopDownloads();
-        }
-    };
 
     const categoryReorder = (list: ChapterDownloadStatus[], from: number, to: number) => {
         if (from === to) {
@@ -99,20 +79,8 @@ export const DownloadQueue: React.FC = () => {
 
     useAppAction(
         <>
-            <CustomTooltip title={t('download.queue.label.delete_all')}>
-                <IconButton onClick={clearQueue} color="inherit">
-                    <DeleteSweepIcon />
-                </IconButton>
-            </CustomTooltip>
-
-            <CustomTooltip
-                title={t(status === DownloaderState.Started ? 'global.button.start' : 'global.button.stop')}
-                disabled={isQueueEmpty}
-            >
-                <IconButton onClick={toggleQueueStatus} disabled={isQueueEmpty} color="inherit">
-                    {status === DownloaderState.Stopped ? <PlayArrowIcon /> : <PauseIcon />}
-                </IconButton>
-            </CustomTooltip>
+            <DownloadQueueClearButton />
+            <DownloadQueueStateButton isQueueEmpty={isQueueEmpty} status={status} />
         </>,
         [status, isQueueEmpty],
     );
