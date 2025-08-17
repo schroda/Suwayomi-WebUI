@@ -138,13 +138,13 @@ export const DownloadQueue: React.FC = () => {
                                 id={queue[index].chapter.id}
                                 isDragging={queue[index].chapter.id === dndActiveDownload?.chapter.id}
                             >
-                                <DownloadQueueChapterCard item={queue[index]} status={status} />
+                                <DownloadQueueChapterCard item={queue[index]} status={status} supportsReordering />
                             </DndSortableItem>
                         )}
                     />
                 </SortableContext>
                 <DndOverlayItem isActive={!!dndActiveDownload}>
-                    <DownloadQueueChapterCard item={dndActiveDownload!} status={status} />
+                    <DownloadQueueChapterCard item={dndActiveDownload!} status={status} supportsReordering />
                 </DndOverlayItem>
             </DndContext>
         </Box>

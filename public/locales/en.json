@@ -167,6 +167,17 @@
     "value_one": "{{count}} chapter",
     "value_other": "{{count}} chapters"
   },
+  "dashboard": {
+    "continue_reading": "Continue reading",
+    "latest_source": {
+      "info": {
+        "no_pinned_source": "See the latest source updates by pinning your favourite sources"
+      },
+      "title": "Source updates"
+    },
+    "latest_updates": "Latest updates",
+    "title": "Dashboard"
+  },
   "download": {
     "queue": {
       "error": {
@@ -502,6 +513,15 @@
       "title": {
         "enabled_languages": "Allowed Languages",
         "weblate": "Weblate"
+      }
+    },
+    "queue": {
+      "stats": {
+        "downloading": "Downloading",
+        "failed": "Failed",
+        "finished": "Finished",
+        "pending": "Pending",
+        "total": "Total"
       }
     },
     "sort": {
@@ -1689,6 +1709,12 @@
     "error": {
       "label": {
         "no_updates_available": "You don't have any updates yet."
+      }
+    },
+    "queue": {
+      "stats": {
+        "skipped_categories": "Skipped categories",
+        "skipped_mangas": "Skipped manga"
       }
     },
     "title": "Updates"

@@ -81,6 +81,7 @@ const { GlobalReaderSettings } = loadable(
 const { More } = loadable(() => import('@/features/settings/screens/More.tsx'), lazyLoadFallback);
 const { Reader } = loadable(() => import('@/features/reader/screens/Reader.tsx'), lazyLoadFallback);
 const { HistorySettings } = loadable(() => import('@/features/history/screens/HistorySettings.tsx'), lazyLoadFallback);
+const { Dashboard } = loadable(() => import('@/features/dashboard/screens/Dashboard.tsx'), lazyLoadFallback);
 
 if (process.env.NODE_ENV !== 'production') {
     // Adds messages only in a dev environment
@@ -139,10 +140,11 @@ const MainApp = () => {
         >
             <ErrorBoundary>
                 <Routes>
-                    {/* General Routes */}
                     <Route path={AppRoutes.root.match} element={<Navigate to={AppRoutes.library.path()} replace />} />
                     <Route path={AppRoutes.matchAll.match} element={<Navigate to={AppRoutes.root.path} replace />} />
+
                     {isMobileWidth && <Route path={AppRoutes.more.match} element={<More />} />}
+                    <Route path={AppRoutes.dashboard.match} element={<Dashboard />} />
                     <Route path={AppRoutes.about.match} element={<About />} />
                     <Route path={AppRoutes.settings.match}>
                         <Route index element={<Settings />} />
@@ -165,8 +167,6 @@ const MainApp = () => {
                         <Route path={AppRoutes.settings.childRoutes.tracking.match} element={<TrackingSettings />} />
                         <Route path={AppRoutes.settings.childRoutes.appearance.match} element={<Appearance />} />
                     </Route>
-
-                    {/* Manga Routes */}
 
                     <Route path={AppRoutes.sources.match}>
                         {/* TODO: deprecated - "source" and "extension" page got merged into "browse" */}

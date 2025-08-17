@@ -25,11 +25,17 @@ import { AppRoutes } from '@/base/AppRoute.constants.ts';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { DownloaderState } from '@/lib/graphql/generated/graphql.ts';
 
-type RestrictedNavBarItem<Show extends NavbarItem['show']> = Omit<NavbarItem, 'show'> & { show: Show };
-
-const NAVIGATION_BAR_BASE_ITEMS = [
+export const NAVIGATION_BAR_ITEMS = [
     {
-        path: AppRoutes.library.path() as RestrictedNavBarItem<'both'>['path'],
+        path: AppRoutes.dashboard.path,
+        title: 'dashboard.title',
+        SelectedIconComponent: CollectionsBookmarkIcon,
+        IconComponent: CollectionsOutlinedBookmarkIcon,
+        show: 'both',
+        moreGroup: NavBarItemMoreGroup.GENERAL,
+    },
+    {
+        path: AppRoutes.library.path() as NavbarItem['path'],
         title: 'library.title',
         SelectedIconComponent: CollectionsBookmarkIcon,
         IconComponent: CollectionsOutlinedBookmarkIcon,
@@ -49,20 +55,17 @@ const NAVIGATION_BAR_BASE_ITEMS = [
         title: 'history.title',
         SelectedIconComponent: HistoryIcon,
         IconComponent: HistoryOutlinedIcon,
-        show: 'both',
-        moreGroup: NavBarItemMoreGroup.GENERAL,
+        show: 'desktop',
+        moreGroup: NavBarItemMoreGroup.HIDDEN_ITEM,
     },
     {
-        path: AppRoutes.browse.path() as RestrictedNavBarItem<'both'>['path'],
+        path: AppRoutes.browse.path() as NavbarItem['path'],
         title: 'global.label.browse',
         SelectedIconComponent: ExploreIcon,
         IconComponent: ExploreOutlinedIcon,
         show: 'both',
         moreGroup: NavBarItemMoreGroup.GENERAL,
     },
-] as const satisfies RestrictedNavBarItem<'both'>[];
-
-const NAVIGATION_BAR_DESKTOP_ITEMS = [
     {
         path: AppRoutes.downloads.path,
         title: 'download.title.download',
@@ -108,9 +111,6 @@ const NAVIGATION_BAR_DESKTOP_ITEMS = [
         show: 'desktop',
         moreGroup: NavBarItemMoreGroup.SETTING_INFO,
     },
-] as const satisfies RestrictedNavBarItem<'desktop'>[];
-
-export const NAVIGATION_BAR_MOBILE_ITEMS = [
     {
         path: AppRoutes.more.path,
         title: 'global.label.more',
@@ -119,10 +119,4 @@ export const NAVIGATION_BAR_MOBILE_ITEMS = [
         show: 'mobile',
         moreGroup: NavBarItemMoreGroup.GENERAL,
     },
-] as const satisfies RestrictedNavBarItem<'mobile'>[];
-
-export const NAVIGATION_BAR_ITEMS = [
-    ...NAVIGATION_BAR_BASE_ITEMS,
-    ...NAVIGATION_BAR_DESKTOP_ITEMS,
-    ...NAVIGATION_BAR_MOBILE_ITEMS,
 ] as const satisfies NavbarItem[];

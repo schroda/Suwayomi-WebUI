@@ -195,6 +195,10 @@ export const AppRoutes = {
         match: '/more',
         path: '/more',
     },
+    dashboard: {
+        match: '/dashboard',
+        path: '/dashboard',
+    },
 } as const satisfies TAppRoutes;
 
 type ExtractChildRouteStringPaths<T> = T extends { childRoutes: infer U } ? ExtractStringPaths<U[keyof U]> : never;

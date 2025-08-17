@@ -31,7 +31,15 @@ import { ChapterDownloadStatus, ChapterIdInfo } from '@/features/chapter/Chapter
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
 
 export const DownloadQueueChapterCard = memo(
-    ({ item, status }: { item: ChapterDownloadStatus; status: DownloaderState }) => {
+    ({
+        item,
+        status,
+        supportsReordering,
+    }: {
+        item: ChapterDownloadStatus;
+        status: DownloaderState;
+        supportsReordering?: boolean;
+    }) => {
         const { t } = useTranslation();
         const preventMobileContextMenu = MediaQuery.usePreventMobileContextMenu();
 
@@ -77,9 +85,11 @@ export const DownloadQueueChapterCard = memo(
                         sx={MediaQuery.preventMobileContextMenuSx()}
                     >
                         <ListCardContent>
-                            <IconButton {...MUIUtil.preventRippleProp()} sx={{ pointerEvents: 'none' }}>
-                                <DragHandle />
-                            </IconButton>
+                            {supportsReordering && (
+                                <IconButton {...MUIUtil.preventRippleProp()} sx={{ pointerEvents: 'none' }}>
+                                    <DragHandle />
+                                </IconButton>
+                            )}
                             <ChapterCardMetadata title={item.manga.title} secondaryText={item.chapter.name} />
                             <DownloadStateIndicator chapterId={item.chapter.id} />
                             <ChapterDownloadRetryButton chapterId={item.chapter.id} />
