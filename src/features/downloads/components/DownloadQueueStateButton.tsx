@@ -33,7 +33,7 @@ export const DownloadQueueStateButton = ({
 
     return (
         <CustomTooltip
-            title={t(status === DownloaderState.Started ? 'global.button.start' : 'global.button.stop')}
+            title={t(status === DownloaderState.Started ? 'global.button.stop' : 'global.button.start')}
             disabled={isQueueEmpty}
         >
             <IconButton onClick={toggleQueueStatus} disabled={isQueueEmpty} color="inherit">
